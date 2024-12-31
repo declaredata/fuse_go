@@ -17,6 +17,7 @@ type Client struct {
 func NewClient(host string, port int) (*Client, error) {
 	addr := fmt.Sprintf("%s:%d", host, port)
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
 	if err != nil {
 		return nil, fmt.Errorf("creating new client: %w", err)
 	}
