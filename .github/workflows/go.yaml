@@ -30,6 +30,10 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
       - name: Build
+        # only explicitly build the main directory, not subdirectories.
+        # code in the main directory will depend on applicable code in
+        # subdirectories, but we don't want to explicitly build the magefiles
+        # subdirectory for example
         run: go build -v .
       - name: Run tests
         run: go test -v ./...
