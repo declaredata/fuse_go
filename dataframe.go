@@ -8,14 +8,14 @@ import (
 )
 
 type DataFrame struct {
-	df_uid uuid.UUID
-	sess   *Session
+	dfUID uuid.UUID
+	sess  *Session
 }
 
 func newDataFrame(uid uuid.UUID, sess *Session) *DataFrame {
 	return &DataFrame{
-		df_uid: uid,
-		sess:   sess,
+		dfUID: uid,
+		sess:  sess,
 	}
 }
 
@@ -32,7 +32,7 @@ func DataFrameFromCSV(ctx context.Context, sess *Session, fileName string) (*Dat
 
 func (d *DataFrame) Collect(ctx context.Context) ([]*Row, error) {
 	contents, err := d.sess.client.Collect(ctx, &gen.DataFrameUID{
-		DataframeUid: d.df_uid.String(),
+		DataframeUid: d.dfUID.String(),
 	})
 	if err != nil {
 		return nil, err
@@ -40,7 +40,19 @@ func (d *DataFrame) Collect(ctx context.Context) ([]*Row, error) {
 	return mapSlice(contents.Rows, func(r *gen.Row) *Row {
 		return &Row{r: r}
 	}), nil
+}
 
+func (d *DataFrame) Select(ctx context.Context, cols ...Column) (*DataFrame, error) {
+	resp, err := d.sess.client.Select(ctx, &gen.SelectRequest{
+		DfUid: d.dfUID.String(),
+		Columns: mapSlice(cols, func(c Column) *gen.Column {
+			return c.toColumn()
+		}),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return d.createDescendant(resp)
 }
 
 func (d *DataFrame) createDescendant(dfUID *gen.DataFrameUID) (*DataFrame, error) {
@@ -52,5 +64,5 @@ func dfUIDToDF(dfUID *gen.DataFrameUID, sess *Session) (*DataFrame, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &DataFrame{df_uid: parsed, sess: sess}, nil
+	return &DataFrame{dfUID: parsed, sess: sess}, nil
 }
