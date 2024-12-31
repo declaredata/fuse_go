@@ -25,7 +25,7 @@ func Lint() {
 // Make sure you have gofumpt installed prior to running this. See the following
 // document for installation instructions:
 // https://github.com/mvdan/gofumpt?tab=readme-ov-file#gofumpt
-func GoFmt() {
+func Fmt() {
 	out, err := sh.Output("gofumpt", "-l", "-w", ".")
 	if err != nil {
 		log.Errorf("Format errors:\n%s", out)

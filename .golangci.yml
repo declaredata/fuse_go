@@ -22,3 +22,4 @@ linters-settings:
     packages:
       - "github.com/magefile/mage/sh"
       - "github.com/charmbracelet/log"
+      - "github.com/declaredata/fuse_go/gen"
