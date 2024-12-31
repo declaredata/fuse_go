@@ -42,6 +42,10 @@ func (d *DataFrame) Collect(ctx context.Context) ([]*Row, error) {
 	}), nil
 }
 
+func (d *DataFrame) Col(colName string) Column {
+	return Col(colName)
+}
+
 func (d *DataFrame) Select(ctx context.Context, cols ...Column) (*DataFrame, error) {
 	resp, err := d.sess.client.Select(ctx, &gen.SelectRequest{
 		DfUid: d.dfUID.String(),
