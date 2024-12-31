@@ -19,7 +19,7 @@ type ExistingCol struct {
 	name string
 }
 
-var _ Column = &ExistingCol{}
+var _ Column = &ExistingCol{name: ""}
 
 func Col(name string) *ExistingCol {
 	return &ExistingCol{name: name}
