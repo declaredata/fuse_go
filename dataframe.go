@@ -48,6 +48,10 @@ func (d *DataFrame) Select(ctx context.Context, cols ...Column) (*DataFrame, err
 	return d.createDescendant(resp)
 }
 
+func (d *DataFrame) Builder() DataFrameBuilder {
+	return DataFrameBuilder{origDF: d, funcs: nil}
+}
+
 func (d *DataFrame) createDescendant(dfUID *gen.DataFrameUID) (*DataFrame, error) {
 	return dfUIDToDF(dfUID, d.sess)
 }
