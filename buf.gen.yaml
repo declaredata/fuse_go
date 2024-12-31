@@ -1,0 +1,11 @@
+version: v2
+plugins:
+  # go build
+  - remote: buf.build/protocolbuffers/go:v1.31.0
+    out: ./gen
+    opt:
+      - paths=source_relative
+  - remote: buf.build/grpc/go:v1.5.1
+    out: ./gen
+    opt:
+      - paths=source_relative
