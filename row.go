@@ -7,5 +7,5 @@ type Row struct {
 }
 
 func (r *Row) Data() map[string]*gen.Value {
-	return r.r.Data
+	return r.r.GetData()
 }

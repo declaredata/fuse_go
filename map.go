@@ -5,5 +5,6 @@ func mapSlice[T, U any](slc []T, fn func(T) U) []U {
 	for idx, elt := range slc {
 		ret[idx] = fn(elt)
 	}
+
 	return ret
 }

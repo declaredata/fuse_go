@@ -1,0 +1,54 @@
+name: Go build and tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  go_build:
+    name: Go Build and Test
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.23.3
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Install dependencies
+        run: go mod tidy
+      - name: Build
+        # only explicitly build the main directory, not subdirectories.
+        # code in the main directory will depend on applicable code in
+        # subdirectories, but we don't want to explicitly build the magefiles
+        # subdirectory for example
+        run: go build -v .
+      - name: Run tests
+        run: go test -v ./...
+
+  go_lint:
+    runs-on: ubuntu-22.04
+    name: Go Lints
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.62.2

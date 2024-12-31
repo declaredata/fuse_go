@@ -2,6 +2,7 @@ package fuse
 
 import (
 	"context"
+	"fmt"
 
 	gen "github.com/declaredata/fuse_go/gen"
 	"github.com/google/uuid"
@@ -12,37 +13,20 @@ type DataFrame struct {
 	sess  *Session
 }
 
-func newDataFrame(uid uuid.UUID, sess *Session) *DataFrame {
-	return &DataFrame{
-		dfUID: uid,
-		sess:  sess,
-	}
-}
-
-func DataFrameFromCSV(ctx context.Context, sess *Session, fileName string) (*DataFrame, error) {
-	df_id, err := sess.client.LoadCSV(ctx, &gen.LoadFileRequest{
-		SessionId: sess.uid.String(),
-		Source:    fileName,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return dfUIDToDF(df_id, sess)
-}
-
 func (d *DataFrame) Collect(ctx context.Context) ([]*Row, error) {
 	contents, err := d.sess.client.Collect(ctx, &gen.DataFrameUID{
 		DataframeUid: d.dfUID.String(),
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("collecting dataframe: %w", err)
 	}
-	return mapSlice(contents.Rows, func(r *gen.Row) *Row {
+
+	return mapSlice(contents.GetRows(), func(r *gen.Row) *Row {
 		return &Row{r: r}
 	}), nil
 }
 
-func (d *DataFrame) Col(colName string) Column {
+func (d *DataFrame) Col(colName string) *ExistingCol {
 	return Col(colName)
 }
 
@@ -54,19 +38,20 @@ func (d *DataFrame) Select(ctx context.Context, cols ...Column) (*DataFrame, err
 		}),
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(
+			"calling select on %d columns: %w",
+			len(cols),
+			err,
+		)
 	}
+
 	return d.createDescendant(resp)
+}
+
+func (d *DataFrame) Builder() DataFrameBuilder {
+	return DataFrameBuilder{origDF: d, funcs: nil}
 }
 
 func (d *DataFrame) createDescendant(dfUID *gen.DataFrameUID) (*DataFrame, error) {
 	return dfUIDToDF(dfUID, d.sess)
-}
-
-func dfUIDToDF(dfUID *gen.DataFrameUID, sess *Session) (*DataFrame, error) {
-	parsed, err := uuid.Parse(dfUID.DataframeUid)
-	if err != nil {
-		return nil, err
-	}
-	return &DataFrame{dfUID: parsed, sess: sess}, nil
 }

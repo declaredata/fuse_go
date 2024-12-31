@@ -2,6 +2,7 @@ package fuse
 
 import (
 	"context"
+	"fmt"
 
 	gen "github.com/declaredata/fuse_go/gen"
 	"github.com/google/uuid"
@@ -17,5 +18,6 @@ func (s *Session) Close(ctx context.Context) error {
 		ctx,
 		&gen.SessionUID{SessionUid: s.uid.String()},
 	)
-	return err
+
+	return fmt.Errorf("closing session: %w", err)
 }
