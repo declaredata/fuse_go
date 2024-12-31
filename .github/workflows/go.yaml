@@ -36,7 +36,7 @@ jobs:
 
   go_lint:
     runs-on: ubuntu-22.04
-    name: Go lints
+    name: Go Lints
     permissions:
       contents: read
     steps:
