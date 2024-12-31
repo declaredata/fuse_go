@@ -18,7 +18,7 @@ func (w BadStatusError) Error() string {
 // downloadFile downloads a file from the specified URL and saves it to the
 // specified output path.
 func downloadFile(url, outputPath string) error {
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
 		return fmt.Errorf("downloading file: %w", err)
 	}

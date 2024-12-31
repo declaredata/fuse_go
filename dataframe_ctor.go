@@ -41,5 +41,6 @@ func dfUIDToDF(dfUID *gen.DataFrameUID, sess *Session) (*DataFrame, error) {
 			err,
 		)
 	}
+
 	return newDataFrame(parsed, sess), nil
 }

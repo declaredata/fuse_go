@@ -38,7 +38,11 @@ func (d *DataFrame) Select(ctx context.Context, cols ...Column) (*DataFrame, err
 		}),
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(
+			"calling select on %d columns: %w",
+			len(cols),
+			err,
+		)
 	}
 
 	return d.createDescendant(resp)

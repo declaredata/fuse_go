@@ -17,5 +17,6 @@ func (s *Session) Close(ctx context.Context) error {
 		ctx,
 		&gen.SessionUID{SessionUid: s.uid.String()},
 	)
+
 	return err
 }
