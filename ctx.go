@@ -1,4 +1,4 @@
-package fuse_client
+package fuse
 
 import (
 	"context"
