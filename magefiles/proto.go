@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -12,7 +13,7 @@ import (
 //
 // Set the FUSE_GO_PROTO_BRANCH env var to indicate the branch from which
 // to download. Defaults to 'main'.
-func DownloadProto() {
+func DownloadProto(ctx context.Context) {
 	protoBranch, ok := os.LookupEnv("FUSE_GO_PROTO_BRANCH")
 	if !ok {
 		protoBranch = "main"
@@ -25,7 +26,7 @@ func DownloadProto() {
 
 	log.Info("Downloading proto file from %s branch", protoBranch)
 
-	if err := downloadFile(url, "fuse.proto"); err != nil {
+	if err := downloadFile(ctx, url, "fuse.proto"); err != nil {
 		log.Fatal(err)
 	}
 

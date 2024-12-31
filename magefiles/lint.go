@@ -19,3 +19,19 @@ func Lint() {
 	log.Info("Success!")
 	log.Print(out)
 }
+
+// Run the gofumpt tool against the codebase.
+//
+// Make sure you have gofumpt installed prior to running this. See the following
+// document for installation instructions:
+// https://github.com/mvdan/gofumpt?tab=readme-ov-file#gofumpt
+func GoFmt() {
+	out, err := sh.Output("gofumpt", "-l", "-w", ".")
+	if err != nil {
+		log.Errorf("Format errors:\n%s", out)
+		log.Fatal(err)
+	}
+
+	log.Info("Success!")
+	log.Print(out)
+}

@@ -14,3 +14,11 @@ linters:
     - style
     - test
     - unused
+
+linters-settings:
+  depguard:
+    list-type: "allowlist"
+    include-go-root: false
+    packages:
+      - "github.com/magefile/mage/sh"
+      - "github.com/charmbracelet/log"
