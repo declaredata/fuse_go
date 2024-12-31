@@ -2,6 +2,7 @@ package fuse
 
 import (
 	"context"
+	"fmt"
 
 	gen "github.com/declaredata/fuse_go/gen"
 	"github.com/google/uuid"
@@ -17,14 +18,15 @@ func (d *DataFrame) Collect(ctx context.Context) ([]*Row, error) {
 		DataframeUid: d.dfUID.String(),
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("collecting dataframe: %w", err)
 	}
-	return mapSlice(contents.Rows, func(r *gen.Row) *Row {
+
+	return mapSlice(contents.GetRows(), func(r *gen.Row) *Row {
 		return &Row{r: r}
 	}), nil
 }
 
-func (d *DataFrame) Col(colName string) Column {
+func (d *DataFrame) Col(colName string) *ExistingCol {
 	return Col(colName)
 }
 
@@ -38,6 +40,7 @@ func (d *DataFrame) Select(ctx context.Context, cols ...Column) (*DataFrame, err
 	if err != nil {
 		return nil, err
 	}
+
 	return d.createDescendant(resp)
 }
 
